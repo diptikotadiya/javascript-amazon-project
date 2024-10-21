@@ -1,4 +1,4 @@
-import {cart,addToCart} from '../data/cart.js';
+import {cart,addToCart, calculateCartQuantity} from '../data/cart.js';
 import {products}from '../data/products.js';
 import {formatCurrency} from './utils/money.js';
 
@@ -24,7 +24,7 @@ products.forEach((product) => {
       </div>
 
       <div class="product-price">
-      ${(formatCurrency(product.priceCents))}
+      $${(formatCurrency(product.priceCents))}
       </div>
 
       <div class="product-quantity-container">
@@ -58,6 +58,8 @@ products.forEach((product) => {
     ;
 });
 
+
+
 //console.log(productsHTML);
 
 document.querySelector('.js-products-grid')
@@ -66,22 +68,25 @@ document.querySelector('.js-products-grid')
 
 
 function updateCartQuantity(productId){
-  let cartQuantity = 0;
-  cart.forEach((cartItem) =>{
-    cartQuantity += cartItem.quantity;
+    const cartQuantity = calculateCartQuantity();
     document.querySelector('.js-cart-quantity')
       .innerHTML = cartQuantity;
+  
+  }
 
-  const addedMessage = document.querySelector(`.js-added-to-cart-${productId}`);
-  addedMessage.classList.add(`added-to-cart-visible`);
-  setTimeout(()=>{
-  addedMessage.classList.remove(`added-to-cart-visible`);
-  },2000
-  );
+  function displayAddedMessage(productId){
+    const addedMessage = document.querySelector(`.js-added-to-cart-${productId}`);
+    addedMessage.classList.add(`added-to-cart-visible`);
+    setTimeout(()=>{
+    addedMessage.classList.remove(`added-to-cart-visible`);
+    },2000);
+  }
 
-  });
-  console.log(cartQuantity);
-}
+
+  //console.log(cartQuantity);
+
+
+updateCartQuantity();
 
 document.querySelectorAll('.js-add-to-cart-button')
   .forEach((button)=>{
@@ -89,6 +94,7 @@ document.querySelectorAll('.js-add-to-cart-button')
       const {productId} = button.dataset;
       addToCart(productId);
       updateCartQuantity(productId);
+      displayAddedMessage(productId);
       console.log(cart);
   });
 });
